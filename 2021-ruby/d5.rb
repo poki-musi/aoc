@@ -10,19 +10,19 @@ def solve ignore_diag = true
   matrix = Array.new(M_X) { Array.new(M_Y, 0) }
 
   DATA.each do |x1, y1, x2, y2|
-    next if ignore_diag && !(x1 == x2 || y1 == y2)
-
-    l = (x1 == x2 ? y2 - y1 : x2 - x1).abs
-
     xp = x2 <=> x1
     yp = y2 <=> y1
+
+    next if ignore_diag && xp != 0 && yp != 0
+
+    l = (x1 == x2 ? y2 - y1 : x2 - x1).abs
 
     (0..l).each do |i|
       matrix[x1 + xp * i][y1 + yp * i] += 1
     end
   end
 
-  matrix.lazy.map { |r| r.lazy.map{ _1.clamp 0..1 }.sum }.sum
+  matrix.lazy.map { |r| r.lazy.map{ _1 > 1 ? 1 : 0 }.sum }.sum
 end
 
 puts solve
