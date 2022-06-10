@@ -7,10 +7,6 @@ tables = TEXT.map { |t|
 
 class Array
   def bingo?
-    any? { |r| r.all? { _1 == 0 } } ||
-      (0...size).any? { |y| (0...size).all? { |x| self[x][y] == 0 } } ||
-      (0...size).all? { self[_1][_1] == 0 } ||
-      (0...size).all? { self[size - _1 - 1][_1] == 0 }
   end
 end
 
@@ -19,11 +15,15 @@ RES = []
 NUMS.each do |num|
   tables = tables.map do |t|
     t.each do |row|
-      idx = row.find_index num
-      (row[idx] = 0) && break if idx
+      if (idx = row.find_index(num))
+        row[idx] = 0
+        break
+      end
     end
 
-    if t.bingo?
+    if t.any? { |r| r.all? { _1 == 0 } } ||
+       (0...size).any? { |y| (0...size).all? { |x| t[x][y] == 0 } }
+
       RES << t.map(&:sum).sum * num
       nil
     else
@@ -32,5 +32,5 @@ NUMS.each do |num|
   end.select(&:itself)
 end
 
-puts RES[0]
-puts RES[-1]
+puts RES.first
+puts RES.last
